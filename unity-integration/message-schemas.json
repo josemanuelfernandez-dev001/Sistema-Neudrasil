@@ -1,0 +1,145 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "SessionStart": {
+      "type": "object",
+      "required": ["type", "sessionId", "patientId", "doctorId", "gameId"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "SESSION_START"
+        },
+        "sessionId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "patientId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "patientName": {
+          "type": "string"
+        },
+        "doctorId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "gameId": {
+          "type": "string"
+        }
+      }
+    },
+    "VRData": {
+      "type": "object",
+      "required": ["type", "sessionId", "timestamp", "dataType", "data"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "VR_DATA"
+        },
+        "sessionId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "dataType": {
+          "type": "string",
+          "enum": ["MOVEMENT", "GAZE", "INTERACTION", "GESTURE", "BIOMETRIC"]
+        },
+        "data": {
+          "type": "object"
+        }
+      }
+    },
+    "SessionEnd": {
+      "type": "object",
+      "required": ["type", "sessionId", "duration"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "SESSION_END"
+        },
+        "sessionId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "duration": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Duration in seconds"
+        },
+        "summary": {
+          "type": "object",
+          "properties": {
+            "totalMovements": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "accuracy": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "completed": {
+              "type": "boolean"
+            },
+            "score": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      }
+    },
+    "Heartbeat": {
+      "type": "object",
+      "required": ["type", "timestamp"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "HEARTBEAT"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "Acknowledgment": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "ACK"
+        },
+        "sessionId": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "Error": {
+      "type": "object",
+      "required": ["type", "message"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "ERROR"
+        },
+        "message": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string",
+          "enum": ["INVALID_FORMAT", "UNKNOWN_MESSAGE_TYPE", "SESSION_NOT_FOUND", "VALIDATION_ERROR"]
+        }
+      }
+    }
+  }
+}
