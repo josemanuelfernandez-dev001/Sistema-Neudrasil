@@ -1,0 +1,50 @@
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+
+# Build outputs
+dist/
+build/
+out/
+.svelte-kit/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Database
+database/sqlite/*.db
+database/backups/*
+
+# AI Models (grandes, usar Git LFS)
+electron/models/**/*.bin
+
+# Electron
+electron/dist/
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Testing
+coverage/
+.nyc_output/
+
+# Prisma
+prisma/migrations/*_*/
+
+# Temporal
+tmp/
+temp/
