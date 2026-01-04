@@ -1,0 +1,165 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  passwordHash  String
+  role          Role     @default(DOCTOR)
+  name          String
+  specialty     String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  patients      Patient[]
+  sessions      TherapySession[]
+  messagesSent  Message[] @relation("SentMessages")
+  messagesReceived Message[] @relation("ReceivedMessages")
+}
+
+enum Role {
+  DOCTOR
+  ADMIN
+  THERAPIST
+}
+
+model Patient {
+  id              String   @id @default(uuid())
+  name            String
+  birthdate       DateTime
+  diagnosis       String?
+  medicalHistory  String?
+  contactInfo     Json?
+  assignedDoctorId String
+  
+  assignedDoctor  User @relation(fields: [assignedDoctorId], references: [id])
+  sessions        TherapySession[]
+  documents       Document[]
+  aiAnalyses      AIAnalysis[]
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model TherapySession {
+  id          String   @id @default(uuid())
+  patientId   String
+  doctorId    String
+  gameId      String
+  status      SessionStatus @default(ACTIVE)
+  startTime   DateTime @default(now())
+  endTime     DateTime?
+  duration    Int?
+  notes       String?
+  
+  patient     Patient @relation(fields: [patientId], references: [id])
+  doctor      User @relation(fields: [doctorId], references: [id])
+  vrData      VRData[]
+  aiAnalyses  AIAnalysis[]
+  
+  createdAt   DateTime @default(now())
+}
+
+enum SessionStatus {
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+model VRData {
+  id          String   @id @default(uuid())
+  sessionId   String
+  timestamp   DateTime
+  dataType    DataType
+  rawData     Json
+  
+  session     TherapySession @relation(fields: [sessionId], references: [id])
+  aiAnalysis  AIAnalysis?
+  
+  createdAt   DateTime @default(now())
+}
+
+enum DataType {
+  MOVEMENT
+  GAZE
+  INTERACTION
+  GESTURE
+  BIOMETRIC
+}
+
+model AIAnalysis {
+  id              String   @id @default(uuid())
+  sessionId       String
+  patientId       String
+  vrDataId        String?  @unique
+  modelVersion    String
+  analysisResult  Json
+  progressScore   Float
+  recommendations String?
+  anomalies       Json?
+  
+  session         TherapySession @relation(fields: [sessionId], references: [id])
+  patient         Patient @relation(fields: [patientId], references: [id])
+  vrData          VRData? @relation(fields: [vrDataId], references: [id])
+  
+  createdAt       DateTime @default(now())
+}
+
+model Document {
+  id              String   @id @default(uuid())
+  patientId       String
+  fileName        String
+  fileType        String
+  fileSize        Int
+  fileUrl         String
+  storageLocation StorageType @default(SUPABASE)
+  uploadedById    String
+  
+  patient         Patient @relation(fields: [patientId], references: [id])
+  
+  createdAt       DateTime @default(now())
+}
+
+enum StorageType {
+  SUPABASE
+  LOCAL
+}
+
+model Message {
+  id          String   @id @default(uuid())
+  senderId    String
+  receiverId  String
+  content     String
+  read        Boolean  @default(false)
+  
+  sender      User @relation("SentMessages", fields: [senderId], references: [id])
+  receiver    User @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  
+  createdAt   DateTime @default(now())
+}
+
+model Appointment {
+  id              String   @id @default(uuid())
+  doctorId        String
+  patientId       String
+  appointmentDate DateTime
+  duration        Int
+  status          AppointmentStatus @default(SCHEDULED)
+  notes           String?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
