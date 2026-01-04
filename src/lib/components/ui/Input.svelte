@@ -6,11 +6,17 @@
   export let error = false;
   export let id = '';
   export let required = false;
+<<<<<<< HEAD
   export let className = '';
 
   function handleInput(event) {
     value = event.target. value;
   }
+=======
+  
+  let className = '';
+  export { className as class };
+>>>>>>> 9d8c50754e96aae47709519e8ace990d998526cc
 </script>
 
 <input
@@ -19,12 +25,19 @@
   {placeholder}
   {disabled}
   {required}
+<<<<<<< HEAD
   {value}
   on:input={handleInput}
+=======
+  bind:value
+  class="input {error ? 'error' : ''} {className}"
+  on:input
+>>>>>>> 9d8c50754e96aae47709519e8ace990d998526cc
   on:change
   on:keypress
   on:focus
   on:blur
+<<<<<<< HEAD
   class="input {error ?  'error' : ''} {className}"
 />
 
@@ -58,3 +71,6 @@
     box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
   }
 </style>
+=======
+/>
+>>>>>>> 9d8c50754e96aae47709519e8ace990d998526cc
