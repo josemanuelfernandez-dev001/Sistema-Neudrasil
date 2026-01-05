@@ -9,15 +9,12 @@ class AuthService {
   }
 
   async init() {
-    logger.info('Initializing auth service.. .');
+    logger.info('Initializing auth service...');
   }
 
-  async login(credentials) {
+  async login(email, password) {
     try {
-      // Extraer email y password correctamente
-      const { email, password } = credentials;
-
-      logger.info(`Login attempt for:  ${email}`);
+      logger.info(`Login attempt for: ${email}`);
 
       // Validación hardcoded para demo
       if (email === 'doctor@neudrasil.com' && password === 'admin123') {
@@ -41,7 +38,7 @@ class AuthService {
         return { user, token };
       }
 
-      logger.warn(`Login failed:  User not found - ${email}`);
+      logger.warn(`Login failed:  Invalid credentials - ${email}`);
       throw new Error('Invalid credentials');
     } catch (error) {
       logger.error('Login error:', error. message);

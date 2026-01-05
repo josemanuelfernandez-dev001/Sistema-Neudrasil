@@ -4,9 +4,8 @@
   import { authStore } from '$lib/stores/auth.store';
 
   onMount(() => {
-    // Redirect to login or dashboard based on auth status
     const unsubscribe = authStore.subscribe(state => {
-      if (state.isAuthenticated) {
+      if (state. isAuthenticated) {
         goto('/dashboard');
       } else {
         goto('/auth/login');
