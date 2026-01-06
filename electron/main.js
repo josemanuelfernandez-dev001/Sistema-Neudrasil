@@ -33,7 +33,7 @@ function createWindow() {
           "script-src 'self' 'unsafe-inline'; " +
           "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
           "font-src 'self' https://fonts.gstatic.com; " +
-          "connect-src 'self' http://localhost:* ws://localhost:* https://*. supabase.co;"
+          "connect-src 'self' http://localhost:* ws://localhost:* https://*.supabase.co;"
         ]
       }
     });
@@ -112,10 +112,14 @@ function registerIPCHandlers() {
   ipcMain.handle('auth:getCurrentUser', async(event) => {
     try {
       const user = authService.getCurrentUser();
-      return { success: true, data: user };
+      // Serializa el usuario para evitar errores de clonación
+      return {
+        success: true,
+        data: user ?  JSON.parse(JSON.stringify(user)) : null
+      };
     } catch (error) {
       logger.error('Error getting current user:', error);
-      return { success: false, error: error.message };
+      return { success: false, error: error. message };
     }
   });
 
@@ -317,21 +321,33 @@ function registerIPCHandlers() {
     }
   });
 
-  // ============ DOCUMENTS HANDLERS ============
-  ipcMain.handle('documents:getByPatient', async (event, patientId) => {
+  // ============ FILE UPLOAD HANDLER ============
+  ipcMain.handle('documents:upload', async (event, fileData) => {
     try {
+      logger.info(`Uploading file: ${fileData.fileName}`);
+
+      // Por ahora, solo guardamos metadata sin el archivo real
       const supabase = databaseService.getSupabase();
       const { data, error } = await supabase
           .from('Document')
-          .select('*')
-          .eq('patientId', patientId)
-          .order('uploadDate', { ascending: false });
+          .insert({
+            patientId: fileData.patientId,
+            fileName: fileData.fileName,
+            fileType: fileData.fileType,
+            fileSize: fileData.fileSize || 0,
+            fileUrl: 'local://pending',
+            storageLocation: 'LOCAL',
+            uploadedById: fileData.uploadedById || 1
+          })
+          .select()
+          .single();
 
       if (error) throw error;
+      logger.info(`Document uploaded:  ${data. id}`);
       return { success: true, data };
     } catch (error) {
-      logger.error('Error getting documents:', error);
-      return { success: false, error:  error.message };
+      logger.error('Error uploading document:', error);
+      return { success: false, error: error.message };
     }
   });
 

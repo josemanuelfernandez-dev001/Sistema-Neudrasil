@@ -58,10 +58,10 @@
 
           {#if showUserMenu}
             <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-50">
-              <a href="/profile" class="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100">
+              <a href="/dashboard/profile" class="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100">
                 Mi Perfil
               </a>
-              <a href="/settings" class="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100">
+              <a href="/dashboard/settings" class="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100">
                 Configuración
               </a>
               <hr class="my-1" />

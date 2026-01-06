@@ -20,15 +20,15 @@
 
       <div class="mb-4">
         <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-        <p class="text-lg">{user.email}</p>
+        <p class="text-lg">{user. email}</p>
       </div>
 
       <div class="mb-4">
         <label class="block text-sm font-medium text-gray-700 mb-2">Rol</label>
-        <p class="text-lg">{user.role}</p>
+        <p class="text-lg">{user. role}</p>
       </div>
     </div>
-  {: else}
+  {:else}
     <p>Cargando...</p>
   {/if}
 </div>
