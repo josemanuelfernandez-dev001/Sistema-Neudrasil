@@ -37,7 +37,10 @@
   }
 
   function createNewPatient() {
+    console.log('🔵 CLICK EN BOTÓN NUEVO PACIENTE');
+    console.log('🔵 Navegando a:  /dashboard/patients/new');
     goto('/dashboard/patients/new');
+    console.log('🔵 goto() ejecutado');
   }
 </script>
 
@@ -49,10 +52,12 @@
       <p class="text-neutral-600 mt-1">Gestiona la información de tus pacientes</p>
     </div>
 
-    <Button variant="primary" on:click={createNewPatient}>
-      <span class="mr-2">+</span>
-      Nuevo Paciente
-    </Button>
+    <a
+      href="/dashboard/patients/new"
+      class="inline-flex items-center px-6 py-3 bg-medical-500 hover: bg-medical-600 text-white rounded-lg font-medium transition shadow"
+    >
+      Crear Primer Paciente
+    </a>
   </div>
 
   <!-- Error Message -->
@@ -80,7 +85,7 @@
     </div>
   {:else}
     <!-- Patients Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md: grid-cols-2 lg: grid-cols-3 gap-6">
       {#each patients as patient}
         <Card clickable on:click={() => goToPatient(patient.id)}>
           <div class="p-6">
@@ -119,7 +124,7 @@
               {#if patient.contactInfo?. phone}
                 <div class="flex items-center">
                   <span class="mr-2">📞</span>
-                  <span>{patient.contactInfo.phone}</span>
+                  <span>{patient.contactInfo. phone}</span>
                 </div>
               {/if}
             </div>
@@ -146,7 +151,7 @@
   .spinner {
     border: 3px solid #f3f4f6;
     border-top: 3px solid #1a9d9d;
-    border-radius: 50%;
+    border-radius:  50%;
     width: 24px;
     height: 24px;
     animation: spin 1s linear infinite;

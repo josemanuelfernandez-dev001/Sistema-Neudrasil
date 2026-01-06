@@ -7,6 +7,9 @@ const websocketService = require('./services/websocket.service');
 const authService = require('./services/auth.service');
 const logger = require('./utils/logger');
 
+
+authService.setDatabaseService(databaseService);
+
 let mainWindow;
 
 function createWindow() {
@@ -67,9 +70,12 @@ function createWindow() {
 // Initialize services
 async function initializeServices() {
   try {
-    logger.info('Initializing services.. .');
+    logger. info('Initializing services.. .');
 
     await databaseService.init();
+
+    // Inyectar databaseService en authService
+    authService.setDatabaseService(databaseService);  // ← AGREGAR ESTA LÍNEA
 
     await websocketService.init(mainWindow);
 
@@ -109,17 +115,26 @@ function registerIPCHandlers() {
     }
   });
 
-  ipcMain.handle('auth:getCurrentUser', async(event) => {
+  ipcMain.handle('patients:getAll', async (event) => {
     try {
-      const user = authService.getCurrentUser();
-      // Serializa el usuario para evitar errores de clonación
-      return {
-        success: true,
-        data: user ?  JSON.parse(JSON.stringify(user)) : null
-      };
+      const currentUser = authService.getCurrentUser();
+
+      if (!currentUser || !currentUser.id) {
+        return { success: false, error: 'Usuario no autenticado' };
+      }
+
+      const supabase = databaseService.getSupabase();
+      const { data, error } = await supabase
+          .from('Patient')
+          .select('*')
+          .eq('assignedDoctorId', currentUser.id)  // ✅ Filtrar por doctor
+          .order('name', { ascending: true });
+
+      if (error) throw error;
+      return { success: true, data };
     } catch (error) {
-      logger.error('Error getting current user:', error);
-      return { success: false, error: error. message };
+      logger.error('Error getting patients:', error);
+      return { success:  false, error: error.message };
     }
   });
 
